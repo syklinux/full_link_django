@@ -5,7 +5,7 @@ import time,datetime
 import requests
 import json
 
-url = "http://es-monitor.hupu.io/accesslog-*/_search"
+url = "http://xxx.xxx.xxx.xxx/accesslog-*/_search"
 
 end = int(time.strftime("%s", time.localtime())) * 1000
 t = time.localtime(time.time() - 10)
