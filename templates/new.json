@@ -1,0 +1,43 @@
+{
+  "nodes": [
+    {
+      "id": "扫码请求成功数",
+      "count": 222190,
+      "x": 200,
+      "y": 160,
+      "success": true
+    },
+    {
+      "id": "扫码请求数",
+      "count": 2221902,
+      "x": 590,
+      "y": 160,
+      "success": true
+    },
+    {
+      "id": "请求创建交易总数",
+      "count": 221231,
+      "x": 580,
+      "y": 380,
+      "success": false
+    }
+  ],
+  "edges": [
+    {
+      "shape": "customLine",
+      "source": "扫码请求数",
+      "id": "d952611b",
+      "precent": 111111100,
+      "target": "扫码请求成功数"
+    },
+    {
+      "shape": "customCurve",
+      "source": "扫码请求成功数",
+      "id": "a893c28f",
+      "precent": 80,
+      "target": "请求创建交易总数",
+      "sourceAnchor": 2,
+      "targetAnchor": 3
+    }
+  ]
+}

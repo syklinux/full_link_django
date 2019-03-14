@@ -1,0 +1,170 @@
+   <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8" http-equiv="refresh" content="10">
+        <title></title>
+    <script src="https://a.alipayobjects.com/jquery/jquery/1.11.1/jquery.js"></script>
+    <script src="/static/g6.js"></script>
+      </head>
+      <body>
+          <div id="c1"></div>ˆ
+
+
+ <script type="text/javascript">
+
+     G6.Global.nodeLabelStyle = {
+             fill: '#fff',
+             textAlign: 'center',
+             textBaseline: 'middle',
+             fontSize: 8
+          };
+
+  var Util = G6.Util;
+
+  // 普通节点
+  G6.registNode('normal', {
+    afterDraw: function(cfg, group) {
+        var originData = cfg.model;
+      group.addShape('text', {
+        attrs: {
+          x: cfg.x,
+          y: cfg.y - 20,
+          text: originData.id,
+          textAlign: 'center',
+          fill: '#CCCCCD'
+        }
+      });
+    }
+  });
+
+
+  G6.registNode('error', {
+          afterDraw: function(cfg, group) {
+              var labelShape;
+            var originData = cfg.model;
+            labelShape = group.addShape('text', {
+              attrs: {
+                x: cfg.x,
+                y: cfg.y -20,
+                text: originData.id,
+                textAlign: 'center',
+                fill: 'red',
+              }
+            });
+          }
+        });
+
+  G6.registNode('data', {
+          afterDraw: function(cfg, group) {
+            var originData = cfg.model;
+            labelShape = group.addShape('text', {
+              attrs: {
+                x: cfg.x -180,
+                y: cfg.y -20,
+                text: originData.id,
+                textAlign: 'center',
+                fill: '#CCCCCD',
+              }
+            });
+          }
+        });
+
+
+  // 起始终止节点
+  G6.registNode('initial', {
+    afterDraw: function(cfg, group) {
+      var originData = cfg.model;
+      group.addShape('text', {
+        attrs: {
+          x: cfg.x,
+          y: cfg.y - 20,
+          text: originData.id,
+          textAlign: 'center',
+          fill: '#40BCF3'
+        }
+      });
+    }
+  }, 'circle');
+
+  // 带动画直线
+  G6.registEdge('customEdge', {
+    draw: function(cfg, group) {
+      var points = cfg.points;
+      var label = cfg.label;
+      var pointsArr = [];
+      var totalLength = 0;
+      var speed = 0.1; // 0.1 像素每毫秒
+      var p2;
+      var cfg;
+      var shape;
+
+      Util.each(points, function(p1, i){
+        pointsArr.push([p1.x, p1.y]);
+        p2 = points[i+1];
+        if(p2){
+          totalLength += Math.sqrt((p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y));
+        }
+      });
+      cfg = {
+        attrs: {
+          points: pointsArr,
+          stroke: '#68C1EA'
+        }
+      };
+      shape = group.addShape('polyline', cfg);
+      var tinyPoint = group.addShape('circle', {
+        attrs: {
+          x: points[0].x,
+          y: points[0].y,
+          r: 2,
+          fill: 'white'
+        }
+      });
+      tinyPoint.animate({
+        onUpdate: function(frame, ratio){
+          var p = shape.getPoint(ratio);
+          frame.attrs.x = p.x;
+          frame.attrs.y = p.y;
+        },
+        repeat: true
+      }, totalLength/speed);
+      return shape;
+    }
+  });
+
+
+  var net = new G6.Net({
+    id: 'c1',            // 容器ID
+    height: 900,         // 画布高
+    fitView: 'autoZoom', // 自动缩放
+    grid: {              // 网格配置
+      line: {            // 网格线的样式
+        stroke: 'rgba(255,255,255,0.1)'
+      },
+      forceAlign: true,  // 是否支持网格对齐
+      cell: 10           // 网格大小
+    }
+  });
+
+  net.get('container').style.background = '#54616E';
+  var data = {{ data|safe }};
+  net.source(data.nodes, data.edges);
+
+  net.node()
+     .label('status')
+     .size('status', function(status){
+       if(!status) {
+         return 10;
+       }
+       return null;
+     })
+     .style({
+       fill: null,
+       stroke: '#40BCF3'
+     });
+  net.render();
+</script>
+
+      </body>
+    </html>
+          

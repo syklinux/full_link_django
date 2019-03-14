@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" http-equiv="refresh" content="10">
+    <title></title>
+    <script src="https://a.alipayobjects.com/jquery/jquery/1.11.1/jquery.js"></script>
+    <script src="https://gw.alipayobjects.com/os/antv/assets/g6/1.2.8/g6.min.js"></script>
+  </head>
+  <body>
+    <div id="c1"></div>
+    <script type="text/javascript">
+      function afterDrawEdge(cfg, group, keyShape){
+        var start = keyShape.getPoint(0);
+        var center = keyShape.getPoint(0.5);
+        var end = keyShape.getPoint(1);
+        var labelPadding = 6;
+        var labelShape;
+        var labelBox;
+        // 文本
+        labelShape = group.addShape('text', {
+          attrs: {
+            x: center.x,
+            y: center.y,
+            text: cfg.label,
+            fill: 'white',
+            textBaseline: 'middle',
+            textAlign: 'center'
+          },
+          zIndex: 4
+        });
+        labelBox = labelShape.getBBox();
+        // 文本框
+        group.addShape('rect', {
+          attrs: {
+            x: labelBox.minX - labelPadding,
+            y: labelBox.minY - labelPadding,
+            width: labelBox.maxX - labelBox.minX + 2 * labelPadding,
+            height: labelBox.maxY - labelBox.minY + 2 * labelPadding,
+            fill: 'black',
+            radius: 8
+          },
+          zIndex: 3
+        });
+        // 起始点圆
+        return keyShape;
+      };
+      function drawCardV2(cfg, group){
+        var model = cfg.model;
+        var width = 200;
+        var height = 90;
+        var upRectHeight = 25;
+        var x = cfg.x - width/2; // 左上角x
+        var y = cfg.y - height/2; // 左上角y
+        var color = cfg.color;
+        var padding = 10;
+        var count = model.count;
+        var api = model.api;
+        var keyShape;
+        keyShape = group.addShape('rect', {
+          attrs: {
+            x: x,
+            y: y,
+            width: width,
+            height: height,
+            stroke: '#999',
+            radius: 10,
+            fill: 'white'
+          }
+        });
+        group.addShape('rect', {
+          attrs: {
+            x: x,
+            y: y,
+            width: width,
+            height: upRectHeight,
+            fill: color,
+            clip: keyShape
+          }
+        });
+        // 标题
+        group.addShape('text', {
+          attrs: {
+            x: x + padding,
+            y: y + padding,
+            text: cfg.label,
+            textBaseline: 'top',
+            textAlign: 'left',
+            fontSize: 12,
+            fill: 'white'
+          }
+        });
+        // 请求数名
+        group.addShape('text', {
+          attrs: {
+            x: x + padding,
+            y: y + upRectHeight + padding,
+            text: api,
+            textBaseline: 'top',
+            textAlign: 'left',
+            fontSize: 8,
+            fill: 'black'
+          }
+        });
+        // 请求数
+        group.addShape('text', {
+          attrs: {
+            x: cfg.x + width/2 - padding,
+            y: y + upRectHeight + padding,
+            text: count,
+            textBaseline: 'top',
+            textAlign: 'right',
+            fontSize: 8,
+            fill: 'black'
+          }
+        });
+        return keyShape;
+      }
+      function drawCard(cfg, group){
+        var model = cfg.model;
+        var width = 150;
+        var height = 90;
+        var upRectHeight = 25;
+        var x = cfg.x - width/2; // 左上角x
+        var y = cfg.y - height/2; // 左上角y
+        var color = cfg.color;
+        var padding = 10;
+        var count = model.count;
+        var api = model.api;
+        var keyShape;
+        keyShape = group.addShape('rect', {
+          attrs: {
+            x: x,
+            y: y,
+            width: width,
+            height: height,
+            stroke: '#999',
+            radius: 10,
+            fill: 'white'
+          }
+        });
+
+
+
+        group.addShape('rect', {
+          attrs: {
+            x: x,
+            y: y,
+            width: width,
+            height: upRectHeight,
+            fill: color,
+            clip: keyShape
+          }
+        });
+        // 标题
+        group.addShape('text', {
+          attrs: {
+            x: x + padding,
+            y: y + padding,
+            text: cfg.label,
+            textBaseline: 'top',
+            textAlign: 'left',
+            fontSize: 12,
+            fill: 'white'
+          }
+        });
+        // 请求数名
+        group.addShape('text', {
+          attrs: {
+            x: x + padding,
+            y: y + upRectHeight + padding,
+            text: api,
+            textBaseline: 'top',
+            textAlign: 'left',
+            fontSize: 8,
+            fill: 'black'
+          }
+        });
+        // 请求数
+        group.addShape('text', {
+          attrs: {
+            x: cfg.x + width/2 - padding,
+            y: y + upRectHeight + padding,
+            text: count,
+            textBaseline: 'top',
+            textAlign: 'right',
+            fontSize: 8,
+            fill: 'black'
+          }
+        });
+        return keyShape;
+      }
+      // 第一步：获取数据
+      var data = {{ data|safe }}
+
+;
+      // 第二步：注册节点
+      G6.registNode('customNode', {
+        draw: function(cfg, group){
+          return drawCard(cfg, group);
+        }
+      });
+      G6.registNode('V2', {
+        draw: function(cfg, group){
+          return drawCardV2(cfg, group);
+        }
+      });
+      G6.registEdge('customLine', {
+        afterDraw: function(cfg , group, keyShape){
+          return afterDrawEdge(cfg, group, keyShape);
+        }
+      }, 'line');
+      G6.registEdge('customCurve', {
+        afterDraw: function(cfg, group, keyShape){
+          return afterDrawEdge(cfg, group, keyShape);
+        }
+      }, 'smooth');
+      // 第三步：初始化图
+      var net = new G6.Net({
+        id: 'c1',            // 容器ID
+        height: 800,         // 画布高
+        fitView: 'autoZoom', // 自动缩放
+      });
+      // 第四步：数据映射
+      net.node()
+
+        .color('success', function(val){
+        var rst;
+        if(val == "true"){
+          rst = '#3B89CF';
+        }else if(val == "error"){
+            rst = '#000000';
+        }else{
+          rst = '#F90426';
+        }
+        return rst;
+      })
+
+        .label('id')
+        .shape('customNode');
+      net.edge()
+        .label('precent');
+      // 第五步：载入数据
+      net.source(data.nodes, data.edges);
+      // 第六步：数据映射
+      net.edge().style({
+        stroke: 'black',
+        lineWidth: 4,
+        arrow: true
+      });
+      // 第七步：渲染关系图
+      net.render();
+    </script>
+  </body>
+</html>
