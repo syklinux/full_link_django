@@ -29,7 +29,7 @@ def _import_history(qps,rt,api,all):
 
 
 def get_es_qps(k):
-    data = "api: {} AND host:bbs.mobileapi.hupu.com".format(k)
+    data = "api: {}".format(k)
     a = es.post_qps(data)
     return a
 
@@ -49,7 +49,7 @@ def get_api():
 
 
 def get_es_rt(k):
-    data = "api:{} AND host:bbs.mobileapi.hupu.com AND NOT hostname:zhaomin-lb-gray* AND NOT code:408".format(k)
+    data = "api:{} XXXXXXXX".format(k)
     a = es.post_rt(data)
     return a
 
