@@ -10,7 +10,7 @@ nohup python utils/dingshi.py &
 
 做了两个前端：
 url： http://ip/
-[active](https://github.com/syklinux/full_link/blob/master/static/1.png)
+![active](https://github.com/syklinux/full_link/blob/master/static/1.png)
 
 url2: http://ip/index/
-[active](https://github.com/syklinux/full_link/blob/master/static/2.png)
+![active](https://github.com/syklinux/full_link/blob/master/static/2.png)
